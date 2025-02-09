@@ -1,4 +1,4 @@
-namespace DiplomaWork.Models
+namespace Diploma.Models
 {
     public class ErrorViewModel
     {

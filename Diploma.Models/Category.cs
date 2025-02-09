@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace DiplomaWork.Models
+namespace Diploma.Models
 {
 	public class Category
 	{
