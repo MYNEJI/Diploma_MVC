@@ -2,6 +2,8 @@
 using Diploma.DataAccess.Repository.IRepository;
 using Diploma.Models;
 using Diploma.Models.ViewModels;
+using Diploma.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Collections.Generic;
 namespace DiplomaWork.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	[Authorize(Roles = SD.Role_Admin)]
 	public class SubjectController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;

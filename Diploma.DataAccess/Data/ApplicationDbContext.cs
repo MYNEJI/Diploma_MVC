@@ -1,9 +1,11 @@
 ﻿using Diploma.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Diploma.DataAccess.Data
 {
-	public class ApplicationDbContext : DbContext
+	public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{
@@ -12,9 +14,12 @@ namespace Diploma.DataAccess.Data
 
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Subject> Subjects { get; set; }
+		public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			base.OnModelCreating(modelBuilder);
+
 			modelBuilder.Entity<Category>().HasData(
 				new Category { Id = 1, Name = "Computer courses", DisplayOrder = 1 },
 				new Category { Id = 2, Name = "Foreighn Languages", DisplayOrder = 2 },
