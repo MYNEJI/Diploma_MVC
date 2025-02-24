@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Diploma.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Diploma.DataAccess.Repository.IRepository
 {
-	public interface IUnitOfWork
+	public interface ISubjectRepository : IRepository<Subject>
 	{
-		ICategoryRepository Category { get; }
-		ISubjectRepository Subject { get; }
-		void Save();
+		void Update(Subject obj);
 	}
 }

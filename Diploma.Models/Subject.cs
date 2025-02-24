@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Diploma.Models
 {
-	public class Product
+	public class Subject
 	{
 		[Key]
 		public int Id { get; set; }
@@ -19,8 +19,6 @@ namespace Diploma.Models
 		public string Description { get; set; }
 		[Required]
 		public string ISBN { get; set; }
-		[Required]
-		public string Author { get; set; }
 		[Required]
 		[Display(Name = "List Price")]
 		[Range(1, 1000)]

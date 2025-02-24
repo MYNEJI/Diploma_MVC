@@ -11,17 +11,17 @@ namespace Diploma.DataAccess.Data
 		}
 
 		public DbSet<Category> Categories { get; set; }
-		public DbSet<Product> Products { get; set; }
+		public DbSet<Subject> Subjects { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Category>().HasData(
-				new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
-				new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
-				new Category { Id = 3, Name = "History", DisplayOrder = 3 }
+				new Category { Id = 1, Name = "Computer courses", DisplayOrder = 1 },
+				new Category { Id = 2, Name = "Foreighn Languages", DisplayOrder = 2 },
+				new Category { Id = 3, Name = "Musical courses", DisplayOrder = 3 }
 				);
-			modelBuilder.Entity<Product>().HasData(
-				new Product
+			modelBuilder.Entity<Subject>().HasData(
+				new Subject
 				{
 					Id = 1,
 					Title = "Fortune of Time",
@@ -34,7 +34,7 @@ namespace Diploma.DataAccess.Data
 					CategoryId = 1,
 					ImageUrl = ""
 				},
-				new Product
+				new Subject
 				{
 					Id = 2,
 					Title = "Dark Skies",
@@ -47,7 +47,7 @@ namespace Diploma.DataAccess.Data
 					CategoryId = 1,
 					ImageUrl = ""
 				},
-				new Product
+				new Subject
 				{
 					Id = 3,
 					Title = "Vanish in the Sunset",
@@ -60,7 +60,7 @@ namespace Diploma.DataAccess.Data
 					CategoryId = 1,
 					ImageUrl = ""
 				},
-				new Product
+				new Subject
 				{
 					Id = 4,
 					Title = "Cotton Candy",
@@ -73,7 +73,7 @@ namespace Diploma.DataAccess.Data
 					CategoryId = 1,
 					ImageUrl = ""
 				},
-				new Product
+				new Subject
 				{
 					Id = 5,
 					Title = "Rock in the Ocean",
@@ -86,7 +86,7 @@ namespace Diploma.DataAccess.Data
 					CategoryId = 3,
 					ImageUrl = ""
 				},
-				new Product
+				new Subject
 				{
 					Id = 6,
 					Title = "Leaves and Wonders",

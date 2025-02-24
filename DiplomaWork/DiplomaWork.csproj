@@ -21,6 +21,7 @@
     <Folder Include="Areas\Student\Views\" />
     <Folder Include="Areas\Teacher\Controllers\" />
     <Folder Include="Areas\Teacher\Views\" />
+    <Folder Include="wwwroot\images\subject\" />
   </ItemGroup>
 
   <ItemGroup>

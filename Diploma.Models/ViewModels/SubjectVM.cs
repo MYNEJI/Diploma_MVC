@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Diploma.Models.ViewModels
 {
-	public class ProductVM
+	public class SubjectVM
 	{
-		public Product Product { get; set; }
+		public Subject Subject { get; set; }
 		[ValidateNever]
 		public IEnumerable<SelectListItem> CategoryList { get; set; }
 	}
