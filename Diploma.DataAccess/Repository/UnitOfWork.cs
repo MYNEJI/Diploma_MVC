@@ -12,12 +12,14 @@ namespace Diploma.DataAccess.Repository
 	{
 		private ApplicationDbContext _db;
 		public ICategoryRepository Category { get; private set; }
+		public ICompanyRepository Company { get; private set; }
 		public ISubjectRepository Subject { get; private set; }
 		public UnitOfWork(ApplicationDbContext db)
 		{
 			_db = db;
 			Category = new CategoryRepository(_db);
 			Subject = new SubjectRepository(_db);
+			Company = new CompanyRepository(_db);
 		}		
 
 		public void Save()

@@ -10,6 +10,7 @@ namespace Diploma.DataAccess.Repository.IRepository
 	{
 		ICategoryRepository Category { get; }
 		ISubjectRepository Subject { get; }
+		ICompanyRepository Company { get; }
 		void Save();
 	}
 }
