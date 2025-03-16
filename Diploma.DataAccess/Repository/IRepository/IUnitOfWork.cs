@@ -12,6 +12,7 @@ namespace Diploma.DataAccess.Repository.IRepository
 		ISubjectRepository Subject { get; }
 		ICompanyRepository Company { get; }
 		IShoppingCartRepository ShoppingCart { get; }
+		ICourseEnrollmentRequestRepository CourseEnrollmentRequest { get; }
 		IApplicationUserRepository ApplicationUser { get; }
 		void Save();
 	}

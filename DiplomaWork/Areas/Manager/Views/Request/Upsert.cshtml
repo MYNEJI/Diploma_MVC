@@ -1,0 +1,69 @@
+﻿@model CourseEnrollmentRequest
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2"> Request</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body py-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        <div class="form-floating py-2 col-12">
+                            <!-- Hidden input for CourseEnrollmentRequest Id -->
+                            <input asp-for="Id" type="hidden" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="RequestDate" class="form-control border-0 shadow" />
+                            <label asp-for="RequestDate" class="ms-2"></label>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Subject.Title" class="form-control border-0 shadow" />
+                            <label asp-for="Subject.Title" class="ms-2"></label>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Email" class="form-control border-0 shadow" />
+                            <label asp-for="Email" class="ms-2"></label>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="PhoneNumber" class="form-control border-0 shadow" />
+                            <label asp-for="PhoneNumber" class="ms-2"></label>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Comments" class="form-control border-0 shadow" />
+                            <label asp-for="Comments" class="ms-2"></label>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<Diploma.Models.Enums.EnrollmentStatus>()"></select>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">Update</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Request" asp-action="Index" class="btn btn-outline-primary border form-control">
+                                    Back To List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

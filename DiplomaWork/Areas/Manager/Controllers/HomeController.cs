@@ -27,34 +27,29 @@ namespace DiplomaWork.Areas.Manager.Controllers
 
 		public IActionResult Details(int subjectId)
 		{
-			ShoppingCart cart = new()
+			CourseEnrollmentRequest request = new()
 			{
 				Subject = _unitOfWork.Subject.Get(u => u.Id == subjectId, includeProperties: "Category"),
-				Count = 1,
 				SubjectId = subjectId
 			};
-			return View(cart);
+			return View(request);
 		}
 
 		[HttpPost]
 		[Authorize]
-		public IActionResult Details(ShoppingCart shoppingCart)
+		public IActionResult Details(CourseEnrollmentRequest enrollmentRequest)
 		{
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
 			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-			shoppingCart.ApplicationUserId = userId;
+			enrollmentRequest.ApplicationUserId = userId;
+			enrollmentRequest.RequestDate = DateTime.Now;
 
-			ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId &&
-			u.SubjectId == shoppingCart.SubjectId);
-			if (cartFromDb != null)
-			{
-				cartFromDb.Count += shoppingCart.Count;
-				_unitOfWork.ShoppingCart.Update(cartFromDb);
-			}
-			else
-			{
-				_unitOfWork.ShoppingCart.Add(shoppingCart);
-			}
+			CourseEnrollmentRequest enrollmentRequestFromDb = _unitOfWork.CourseEnrollmentRequest
+				.Get(u => u.ApplicationUserId == userId &&
+			u.SubjectId == enrollmentRequest.SubjectId);
+
+			_unitOfWork.CourseEnrollmentRequest.Add(enrollmentRequest);
+
 			_unitOfWork.Save();
 
 			return RedirectToAction(nameof(Index));
