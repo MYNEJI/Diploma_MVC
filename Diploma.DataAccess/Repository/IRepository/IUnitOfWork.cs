@@ -14,6 +14,11 @@ namespace Diploma.DataAccess.Repository.IRepository
 		IShoppingCartRepository ShoppingCart { get; }
 		ICourseEnrollmentRequestRepository CourseEnrollmentRequest { get; }
 		IApplicationUserRepository ApplicationUser { get; }
+		IWeekdayRepository Weekday { get; }
+		IGroupRepository Group { get; }
+		IGroupStudentRepository GroupStudent { get; }
+		IGroupWeekdayRepository GroupWeekday { get; }
+		ISubjectTeacherRepository SubjectTeacher { get; }
 		void Save();
 	}
 }

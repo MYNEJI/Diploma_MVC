@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace DiplomaWork.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	[Authorize(Roles = SD.Role_Admin)]
+	[Authorize(Roles = "Manager, Admin")]
 	public class SubjectController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
@@ -108,6 +108,65 @@ namespace DiplomaWork.Areas.Admin.Controllers
 				});
 				return View(subjectVM);
 			}
+		}
+
+		[HttpGet]
+		public IActionResult AssignTeachers(int subjectId)
+		{
+			var subject = _unitOfWork.Subject.Get(u => u.Id == subjectId, includeProperties: "Category");
+			if (subject == null)
+			{
+				return NotFound();
+			}
+
+			SubjectTeacherVM vm = new SubjectTeacherVM
+			{
+				Subject = subject,
+				TeacherList = _unitOfWork.ApplicationUser.GetAll().Select(user => new SelectListItem
+				{
+					Text = user.Name,
+					Value = user.Id
+				}),
+				AssignedTeachers = _unitOfWork.SubjectTeacher.GetAll(u => u.SubjectId == subjectId)
+								  .Select(u => u.ApplicationUserId).ToList()
+			};
+
+			return View(vm);
+		}
+
+		[HttpPost]
+		public IActionResult AssignTeachers(SubjectTeacherVM vm)
+		{
+			vm.TeacherList = _unitOfWork.ApplicationUser.GetAll().Select(user => new SelectListItem
+			{
+				Text = user.Name,
+				Value = user.Id
+			}).ToList();
+
+			vm.AssignedTeachers = _unitOfWork.SubjectTeacher.GetAll(u => u.SubjectId == vm.Subject.Id)
+									 .Select(u => u.ApplicationUserId)
+									 .ToList();
+
+			// Логика назначения
+			var existingAssignment = _unitOfWork.SubjectTeacher.GetAll(u =>
+				u.SubjectId == vm.Subject.Id && u.ApplicationUserId == vm.SelectedTeacherId).FirstOrDefault();
+
+			if (existingAssignment == null)
+			{
+				_unitOfWork.SubjectTeacher.Add(new SubjectTeacher
+				{
+					SubjectId = vm.Subject.Id,
+					ApplicationUserId = vm.SelectedTeacherId
+				});
+				_unitOfWork.Save();
+				TempData["success"] = "Teacher assigned successfully!";
+			}
+			else
+			{
+				TempData["error"] = "This teacher is already assigned to this subject.";
+			}
+
+			return RedirectToAction(nameof(AssignTeachers), new { subjectId = vm.Subject.Id });
 		}
 
 		#region API CALLS

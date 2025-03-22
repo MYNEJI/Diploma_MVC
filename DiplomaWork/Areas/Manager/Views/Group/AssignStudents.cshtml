@@ -1,0 +1,42 @@
+﻿@model GroupStudentVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <h2 class="text-white py-2 text-center">Assign Students to @Model.Group.Name</h2>
+    </div>
+    <div class="card-body py-4">
+        <form method="post">
+            <input type="hidden" asp-for="Group.Id" />
+            <div class="form-floating py-2 col-12">
+                <select asp-for="SelectedStudentId" asp-items="Model.StudentList" class="form-select border-0 shadow">
+                    <option disabled selected>--Select Student--</option>
+                </select>
+                <span asp-validation-for="SelectedStudentId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Assign Student</button>
+        </form>
+
+        <h3 class="mt-5">Assigned Students</h3>
+        <ul>
+            @foreach (var studentId in Model.AssignedStudents)
+            {
+                var student = Model.StudentList.FirstOrDefault(t => t.Value == studentId);
+                if (student != null)
+                {
+                    <li>@student.Text</li>
+                }
+            }
+        </ul>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Subject" asp-action="Index" class="btn btn-outline-primary border form-control">
+                Back
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

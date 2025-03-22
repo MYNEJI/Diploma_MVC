@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace DiplomaWork.Areas.Manager.Controllers
 {
-	[Area("manager")]
+	[Area("Manager")]
 	[Authorize]
 	public class CartController : Controller
 	{

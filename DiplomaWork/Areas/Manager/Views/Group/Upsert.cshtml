@@ -1,0 +1,66 @@
+﻿@model Group
+<h2>@(Model.Id!=0?"Update":"Create") Group</h2>
+
+<form asp-action="Upsert" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input asp-for="SubjectId" type="hidden" name="SubjectId" value="@ViewBag.SubjectId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="SubjectId" class="form-label"></label>
+        <input asp-for="SubjectId" class="form-control" />
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="@Model.CreationDate" class="form-label"></label>
+        <input asp-for="@Model.CreationDate" class="form-control" type="date" readonly />
+        <span asp-validation-for="@Model.CreationDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="StartTime" class="form-label"></label>
+        <input asp-for="StartTime" class="form-control" type="time" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="EndTime" class="form-label"></label>
+        <input asp-for="EndTime" class="form-control" type="time" />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="WeekDays">Select Weekdays</label>
+        <div>
+            @foreach (var day in (IEnumerable<Diploma.Models.Enums.WeekDays>)ViewBag.WeekDays)
+            {
+                <input type="checkbox" name="WeekDays" value="@day"
+                       @(Model.WeekDays != null && Model.WeekDays.Contains(day) ? "checked" : "") />
+                <label>@day</label>
+            }
+        </div>
+        <span asp-validation-for="WeekDays" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3 d-none">
+        <label asp-for="SubjectTeacherId" class="form-label"></label>
+        <select asp-for="SubjectTeacherId" asp-items="ViewBag.SubjectTeacherList" class="form-control"></select>
+        <span asp-validation-for="SubjectTeacherId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script src="~/js/group.js"></script>
+}

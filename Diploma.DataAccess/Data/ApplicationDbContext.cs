@@ -18,15 +18,35 @@ namespace Diploma.DataAccess.Data
 		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 		public DbSet<CourseEnrollmentRequest> CourseEnrollmentRequests { get; set; }
 		public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+		public DbSet<Weekday> Weekdays { get; set; }
+		public DbSet<Group> Groups { get; set; }
+		public DbSet<GroupStudent> GroupStudents { get; set; }
+		public DbSet<GroupWeekday> GroupWeekdays { get; set; }
+		public DbSet<SubjectTeacher> SubjectTeachers { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.Entity<Group>()
+				.HasOne(g => g.SubjectTeacher)
+				.WithMany()
+				.OnDelete(DeleteBehavior.Restrict);
+
+
 			modelBuilder.Entity<Category>().HasData(
-				new Category { Id = 1, Name = "Computer courses", DisplayOrder = 1 },
-				new Category { Id = 2, Name = "Foreighn Languages", DisplayOrder = 2 },
-				new Category { Id = 3, Name = "Musical courses", DisplayOrder = 3 }
+					new Category { Id = 1, Name = "Computer courses", DisplayOrder = 1 },
+					new Category { Id = 2, Name = "Foreighn Languages", DisplayOrder = 2 },
+					new Category { Id = 3, Name = "Musical courses", DisplayOrder = 3 }
+					);
+
+			modelBuilder.Entity<Weekday>().HasData(
+				new Weekday { Id = 1, Day = "Monday" },
+				new Weekday { Id = 2, Day = "Tuesday" },
+				new Weekday { Id = 3, Day = "Wednesday" },
+				new Weekday { Id = 4, Day = "Thursday" },
+				new Weekday { Id = 5, Day = "Friday" },
+				new Weekday { Id = 6, Day = "Saturday" }
 				);
 
 			modelBuilder.Entity<Company>().HasData(

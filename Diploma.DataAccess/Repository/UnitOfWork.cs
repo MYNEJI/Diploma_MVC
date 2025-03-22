@@ -18,6 +18,11 @@ namespace Diploma.DataAccess.Repository
 		public IShoppingCartRepository ShoppingCart { get; private set; }
 		public ICourseEnrollmentRequestRepository CourseEnrollmentRequest { get; private set; }
 		public IApplicationUserRepository ApplicationUser { get; private set; }
+		public IWeekdayRepository Weekday { get; private set; }
+		public IGroupRepository Group { get; private set; }
+		public IGroupStudentRepository GroupStudent { get; private set; }
+		public IGroupWeekdayRepository GroupWeekday { get; private set; }
+		public ISubjectTeacherRepository SubjectTeacher { get; private set; }
 		public UnitOfWork(ApplicationDbContext db)
 		{
 			_db = db;
@@ -27,6 +32,11 @@ namespace Diploma.DataAccess.Repository
 			Category = new CategoryRepository(_db);
 			Subject = new SubjectRepository(_db);
 			Company = new CompanyRepository(_db);
+			Weekday = new WeekdayRepository(_db);
+			Group = new GroupRepository(_db);
+			GroupStudent = new GroupStudentRepository(_db);
+			GroupWeekday = new GroupWeekdayRepository(_db);
+			SubjectTeacher = new SubjectTeacherRepository(_db);
 		}		
 
 		public void Save()

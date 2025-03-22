@@ -18,6 +18,7 @@ function loadDataTable() {
                     return `<div class="w-75 btn-group" role="group">
                      <a href="/admin/subject/upsert?id=${data}" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>               
                      <a onClick=Delete('/admin/subject/delete/${data}') class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+                     <a href="/manager/group/index?subjectId=${data}" class="btn btn-primary mx-2">Groups</a>
                     </div>`
                 },
                 "width": "25%"

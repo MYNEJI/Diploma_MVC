@@ -170,6 +170,96 @@ namespace Diploma.DataAccess.Migrations
                     b.ToTable("CourseEnrollmentRequests");
                 });
 
+            modelBuilder.Entity("Diploma.Models.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectTeacherId")
+                        .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("WeekDays")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("SubjectTeacherId");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Diploma.Models.GroupStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("GroupStudents");
+                });
+
+            modelBuilder.Entity("Diploma.Models.GroupWeekday", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WeekdayId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("WeekdayId");
+
+                    b.ToTable("GroupWeekdays");
+                });
+
             modelBuilder.Entity("Diploma.Models.ShoppingCart", b =>
                 {
                     b.Property<int>("Id")
@@ -320,6 +410,80 @@ namespace Diploma.DataAccess.Migrations
                             Price100 = 20.0,
                             Price50 = 22.0,
                             Title = "Leaves and Wonders"
+                        });
+                });
+
+            modelBuilder.Entity("Diploma.Models.SubjectTeacher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("SubjectTeachers");
+                });
+
+            modelBuilder.Entity("Diploma.Models.Weekday", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Weekdays");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Day = "Monday"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Day = "Tuesday"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Day = "Wednesday"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Day = "Thursday"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Day = "Friday"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Day = "Saturday"
                         });
                 });
 
@@ -577,6 +741,63 @@ namespace Diploma.DataAccess.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("Diploma.Models.Group", b =>
+                {
+                    b.HasOne("Diploma.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.SubjectTeacher", "SubjectTeacher")
+                        .WithMany()
+                        .HasForeignKey("SubjectTeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("SubjectTeacher");
+                });
+
+            modelBuilder.Entity("Diploma.Models.GroupStudent", b =>
+                {
+                    b.HasOne("Diploma.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("Diploma.Models.GroupWeekday", b =>
+                {
+                    b.HasOne("Diploma.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.Weekday", "Weekday")
+                        .WithMany()
+                        .HasForeignKey("WeekdayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Weekday");
+                });
+
             modelBuilder.Entity("Diploma.Models.ShoppingCart", b =>
                 {
                     b.HasOne("Diploma.Models.ApplicationUser", "ApplicationUser")
@@ -605,6 +826,25 @@ namespace Diploma.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Diploma.Models.SubjectTeacher", b =>
+                {
+                    b.HasOne("Diploma.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

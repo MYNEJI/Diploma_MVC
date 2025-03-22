@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DiplomaWork.Areas.Manager.Controllers
 {
-	[Area("manager")]
-	[Authorize]
+	[Area("Manager")]
+	//[Authorize]
 	public class RequestController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
