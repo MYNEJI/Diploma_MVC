@@ -1,0 +1,39 @@
+﻿@model List<GroupStudent>
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Group List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body py-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-end">
+            </div>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Group Name</th>
+                    <th>Subject Name</th>
+                    <th>Creation Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.OrderBy(u => u.ApplicationUser.Name))
+                {
+                    <tr>
+                        <td>@student.ApplicationUser.Name</td>
+                        <td>@student.ApplicationUser.Email</td>
+                        <td>@student.ApplicationUser.PhoneNumber</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

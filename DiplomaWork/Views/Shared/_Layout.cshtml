@@ -32,6 +32,9 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Manager" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Teacher" asp-controller="Study" asp-action="Index">Study</a>
+                        </li>
                         @if (User.IsInRole(SD.Role_Admin))
                         {
                             <li class="nav-item dropdown">
@@ -80,6 +83,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js"></script> 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

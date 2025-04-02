@@ -23,6 +23,7 @@ namespace Diploma.DataAccess.Repository
 		public IGroupStudentRepository GroupStudent { get; private set; }
 		public IGroupWeekdayRepository GroupWeekday { get; private set; }
 		public ISubjectTeacherRepository SubjectTeacher { get; private set; }
+		public IFileResourceRepository FileResource { get; private set; }
 		public UnitOfWork(ApplicationDbContext db)
 		{
 			_db = db;
@@ -37,6 +38,7 @@ namespace Diploma.DataAccess.Repository
 			GroupStudent = new GroupStudentRepository(_db);
 			GroupWeekday = new GroupWeekdayRepository(_db);
 			SubjectTeacher = new SubjectTeacherRepository(_db);
+			FileResource = new FileResourceRepository(_db);
 		}		
 
 		public void Save()

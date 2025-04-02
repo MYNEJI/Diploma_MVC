@@ -23,6 +23,7 @@ namespace Diploma.DataAccess.Data
 		public DbSet<GroupStudent> GroupStudents { get; set; }
 		public DbSet<GroupWeekday> GroupWeekdays { get; set; }
 		public DbSet<SubjectTeacher> SubjectTeachers { get; set; }
+		public DbSet<FileResource> FileResources { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

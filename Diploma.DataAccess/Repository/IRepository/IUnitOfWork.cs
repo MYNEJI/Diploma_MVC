@@ -19,6 +19,7 @@ namespace Diploma.DataAccess.Repository.IRepository
 		IGroupStudentRepository GroupStudent { get; }
 		IGroupWeekdayRepository GroupWeekday { get; }
 		ISubjectTeacherRepository SubjectTeacher { get; }
+		IFileResourceRepository FileResource { get; }
 		void Save();
 	}
 }

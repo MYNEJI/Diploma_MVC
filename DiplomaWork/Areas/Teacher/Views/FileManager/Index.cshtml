@@ -1,0 +1,46 @@
+﻿@model IEnumerable<FileResource>
+@{
+    ViewBag.Title = "File Manager";
+}
+<h2>File Manager</h2>
+<h4>Group: @ViewBag.GroupId</h4>
+
+<form asp-action="CreateFolder" method="post">
+    <input type="hidden" name="groupId" value="@ViewBag.GroupId" />
+    <input type="text" name="folderName" placeholder="Folder Name" />
+    <button type="submit" class="btn btn-primary">Create Folder</button>
+</form>
+
+<form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="groupId" value="@ViewBag.GroupId" />
+    <input type="file" name="file" />
+    <button type="submit" class="btn btn-primary">Upload File</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var resource in Model)
+        {
+            <tr>
+                <td>@resource.Name</td>
+                <td>@(resource.IsFolder ? "Folder" : "File")</td>
+                <td>
+                    @using (Html.BeginForm("Delete", "FileManager", new { id = resource.Id }, FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    }
+                </td>
+                <a href="@Url.Action("Download", "FileManager", new { id = resource.Id })" class="btn btn-success">
+                    Download
+                </a>
+            </tr>
+        }
+    </tbody>
+</table>
