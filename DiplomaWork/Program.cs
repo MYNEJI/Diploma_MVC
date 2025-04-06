@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Diploma.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Diploma.DataAccess.DbInitializer;
 
 
 //////Add-Migration AddCategoryToDbAndSeedTable
@@ -26,8 +27,18 @@ namespace DiplomaWork
 			{
 				options.LoginPath = $"/Identity/Account/Login";
 				options.LogoutPath = $"/Identity/Account/Logout";
-				options.AccessDeniedPath = $"/Identity/Account/AccessDeniedPath";
+				options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 			});
+
+			builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+			builder.Services.AddDistributedMemoryCache();
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(100);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
+
 			builder.Services.AddRazorPages();
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddScoped<IEmailSender, EmailSender>();
@@ -43,6 +54,8 @@ namespace DiplomaWork
 			app.UseRouting();
 			app.UseAuthentication();
 			app.UseAuthorization();
+			app.UseSession();
+			SeedDatabase();
 			app.MapRazorPages();
 			app.MapStaticAssets();
 			app.MapControllerRoute(
@@ -50,6 +63,15 @@ namespace DiplomaWork
 				pattern: "{area=Manager}/{controller=Home}/{action=Index}/{id?}");
 
 			app.Run();
+
+			void SeedDatabase()
+			{
+				using (var scope = app.Services.CreateScope())
+				{
+					var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+					dbInitializer.Initialize();
+				}
+			}
 		}
 	}
 }
