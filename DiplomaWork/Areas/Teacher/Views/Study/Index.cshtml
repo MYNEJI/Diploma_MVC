@@ -46,6 +46,12 @@
                                 <a asp-controller="Study" asp-action="Students" asp-route-groupId="@group.Id" class="btn btn-primary mx-2">
                                     <i class="bi bi-pencil-square"></i> Students
                                 </a>
+                                <a asp-controller="Chat"
+                                   asp-action="Index"
+                                   asp-route-groupId="@group.Id"
+                                   class="btn btn-primary mx-2">
+                                    <i class="bi bi-pencil-square"></i> Group Chat
+                                </a>
                             </div>
                         </td>
                     </tr>

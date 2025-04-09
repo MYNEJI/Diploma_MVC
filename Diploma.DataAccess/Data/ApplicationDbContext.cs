@@ -24,6 +24,7 @@ namespace Diploma.DataAccess.Data
 		public DbSet<GroupWeekday> GroupWeekdays { get; set; }
 		public DbSet<SubjectTeacher> SubjectTeachers { get; set; }
 		public DbSet<FileResource> FileResources { get; set; }
+		public DbSet<ChatMessage> ChatMessages { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

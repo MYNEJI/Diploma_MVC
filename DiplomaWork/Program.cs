@@ -7,7 +7,6 @@ using Diploma.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Diploma.DataAccess.DbInitializer;
 
-
 //////Add-Migration AddCategoryToDbAndSeedTable
 //////Update-database
 namespace DiplomaWork
@@ -42,6 +41,7 @@ namespace DiplomaWork
 			builder.Services.AddRazorPages();
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 			var app = builder.Build();
 
 			if (!app.Environment.IsDevelopment())
