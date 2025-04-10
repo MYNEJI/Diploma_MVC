@@ -35,6 +35,11 @@ namespace Diploma.Models
 		[ValidateNever]
 		public SubjectTeacher SubjectTeacher { get; set; }
 		[Required]
+		public int ClassroomId { get; set; }
+		[ForeignKey("ClassroomId")]
+		[ValidateNever]
+		public Classroom Classroom { get; set; }
+		[Required]
 		public List<WeekDays> WeekDays { get; set; }
 	}
 }

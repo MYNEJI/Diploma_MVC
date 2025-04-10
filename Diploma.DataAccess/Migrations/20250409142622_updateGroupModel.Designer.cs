@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Diploma.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250322152912_addFileResourse")]
-    partial class addFileResourse
+    [Migration("20250409142622_updateGroupModel")]
+    partial class updateGroupModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,72 @@ namespace Diploma.DataAccess.Migrations
                             Id = 3,
                             DisplayOrder = 3,
                             Name = "Musical courses"
+                        });
+                });
+
+            modelBuilder.Entity("Diploma.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("Diploma.Models.Classroom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Classrooms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoomName = "English room"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoomName = "Music room"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoomName = "German room"
                         });
                 });
 
@@ -215,6 +281,9 @@ namespace Diploma.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ClassroomId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
@@ -242,6 +311,8 @@ namespace Diploma.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
 
                     b.HasIndex("SubjectId");
 
@@ -759,6 +830,25 @@ namespace Diploma.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
+            modelBuilder.Entity("Diploma.Models.ChatMessage", b =>
+                {
+                    b.HasOne("Diploma.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("Diploma.Models.CourseEnrollmentRequest", b =>
                 {
                     b.HasOne("Diploma.Models.ApplicationUser", "ApplicationUser")
@@ -797,6 +887,12 @@ namespace Diploma.DataAccess.Migrations
 
             modelBuilder.Entity("Diploma.Models.Group", b =>
                 {
+                    b.HasOne("Diploma.Models.Classroom", "Classroom")
+                        .WithMany()
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Diploma.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
@@ -808,6 +904,8 @@ namespace Diploma.DataAccess.Migrations
                         .HasForeignKey("SubjectTeacherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Classroom");
 
                     b.Navigation("Subject");
 

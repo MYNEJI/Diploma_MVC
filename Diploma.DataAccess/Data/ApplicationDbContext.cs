@@ -25,6 +25,7 @@ namespace Diploma.DataAccess.Data
 		public DbSet<SubjectTeacher> SubjectTeachers { get; set; }
 		public DbSet<FileResource> FileResources { get; set; }
 		public DbSet<ChatMessage> ChatMessages { get; set; }
+		public DbSet<Classroom> Classrooms { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -35,11 +36,22 @@ namespace Diploma.DataAccess.Data
 				.WithMany()
 				.OnDelete(DeleteBehavior.Restrict);
 
+			modelBuilder.Entity<Group>()
+				.HasOne(g => g.Classroom)
+				.WithMany()
+				.OnDelete(DeleteBehavior.Restrict);
+
 
 			modelBuilder.Entity<Category>().HasData(
 					new Category { Id = 1, Name = "Computer courses", DisplayOrder = 1 },
 					new Category { Id = 2, Name = "Foreighn Languages", DisplayOrder = 2 },
 					new Category { Id = 3, Name = "Musical courses", DisplayOrder = 3 }
+					);
+
+			modelBuilder.Entity<Classroom>().HasData(
+					new Classroom { Id = 1, RoomName = "English room" },
+					new Classroom { Id = 2, RoomName = "Music room" },
+					new Classroom { Id = 3, RoomName = "German room" }
 					);
 
 			modelBuilder.Entity<Weekday>().HasData(

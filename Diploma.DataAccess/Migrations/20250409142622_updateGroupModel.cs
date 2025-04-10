@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Diploma.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addInitialCreate : Migration
+    public partial class updateGroupModel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,6 +39,19 @@ namespace Diploma.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Classrooms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Classrooms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -338,11 +351,18 @@ namespace Diploma.DataAccess.Migrations
                     StartTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EndTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubjectTeacherId = table.Column<int>(type: "int", nullable: false),
+                    ClassroomId = table.Column<int>(type: "int", nullable: false),
                     WeekDays = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Groups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Groups_Classrooms_ClassroomId",
+                        column: x => x.ClassroomId,
+                        principalTable: "Classrooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Groups_SubjectTeachers_SubjectTeacherId",
                         column: x => x.SubjectTeacherId,
@@ -353,6 +373,62 @@ namespace Diploma.DataAccess.Migrations
                         name: "FK_Groups_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GroupId = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ChatMessages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatMessages_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FileResources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsFolder = table.Column<bool>(type: "bit", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentFolderId = table.Column<int>(type: "int", nullable: true),
+                    GroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FileResources_FileResources_ParentFolderId",
+                        column: x => x.ParentFolderId,
+                        principalTable: "FileResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_FileResources_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -417,6 +493,16 @@ namespace Diploma.DataAccess.Migrations
                     { 1, 1, "Computer courses" },
                     { 2, 2, "Foreighn Languages" },
                     { 3, 3, "Musical courses" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Classrooms",
+                columns: new[] { "Id", "RoomName" },
+                values: new object[,]
+                {
+                    { 1, "English room" },
+                    { 2, "Music room" },
+                    { 3, "German room" }
                 });
 
             migrationBuilder.InsertData(
@@ -500,6 +586,16 @@ namespace Diploma.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_GroupId",
+                table: "ChatMessages",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_SenderId",
+                table: "ChatMessages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourseEnrollmentRequests_ApplicationUserId",
                 table: "CourseEnrollmentRequests",
                 column: "ApplicationUserId");
@@ -508,6 +604,21 @@ namespace Diploma.DataAccess.Migrations
                 name: "IX_CourseEnrollmentRequests_SubjectId",
                 table: "CourseEnrollmentRequests",
                 column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FileResources_GroupId",
+                table: "FileResources",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FileResources_ParentFolderId",
+                table: "FileResources",
+                column: "ParentFolderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Groups_ClassroomId",
+                table: "Groups",
+                column: "ClassroomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_SubjectId",
@@ -584,7 +695,13 @@ namespace Diploma.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ChatMessages");
+
+            migrationBuilder.DropTable(
                 name: "CourseEnrollmentRequests");
+
+            migrationBuilder.DropTable(
+                name: "FileResources");
 
             migrationBuilder.DropTable(
                 name: "GroupStudents");
@@ -603,6 +720,9 @@ namespace Diploma.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Weekdays");
+
+            migrationBuilder.DropTable(
+                name: "Classrooms");
 
             migrationBuilder.DropTable(
                 name: "SubjectTeachers");

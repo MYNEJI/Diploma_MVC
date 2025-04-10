@@ -34,6 +34,12 @@
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
 
+    <div class="form-group mb-3">
+        <label asp-for="ClassroomId" class="form-label"></label>
+        <select asp-for="ClassroomId" asp-items="ViewBag.ClassroomList" class="form-control"></select>
+        <span asp-validation-for="ClassroomId" class="text-danger"></span>
+    </div>
+
     <div class="form-group">
         <label for="WeekDays">Select Weekdays</label>
         <div>

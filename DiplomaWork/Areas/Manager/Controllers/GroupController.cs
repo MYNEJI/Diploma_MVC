@@ -39,7 +39,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 			ViewBag.SubjectId = subjectId;			
 			Group groupObj = id == 0
 				? new Group { CreationDate = DateTime.Now, SubjectId = subjectId }
-				: _unitOfWork.Group.Get(u => u.Id == id, includeProperties: "Subject,SubjectTeacher");
+				: _unitOfWork.Group.Get(u => u.Id == id, includeProperties: "Subject,SubjectTeacher,Classroom");
 
 			var teachers = _unitOfWork.SubjectTeacher
 				.GetAll(includeProperties: "ApplicationUser")
@@ -50,7 +50,17 @@ namespace DiplomaWork.Areas.Manager.Controllers
 				})
 				.ToList();
 
+			var classrooms = _unitOfWork.Classroom
+				.GetAll()
+				.Select(room => new
+				{
+					Id = room.Id,
+					Name = room.RoomName
+				})
+				.ToList();
+
 			ViewBag.SubjectTeacherList = new SelectList(teachers, "Id", "Name");
+			ViewBag.ClassroomList = new SelectList(classrooms, "Id", "Name");
 			ViewBag.WeekDays = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
 			return View(groupObj);
 		}
@@ -78,6 +88,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 			// Если валидация не прошла, нужно снова подготовить списки
 			ViewBag.SubjectList = new SelectList(_unitOfWork.Subject.GetAll(), "Id", "Name");
 			ViewBag.SubjectTeacherList = new SelectList(_unitOfWork.SubjectTeacher.GetAll(), "Id", "Name");
+			ViewBag.ClassroomList = new SelectList(_unitOfWork.Classroom.GetAll(), "Id", "RoomName");
 			ViewData["WeekDays"] = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
 			return View(groupObj);
 		}

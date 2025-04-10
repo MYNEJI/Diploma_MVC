@@ -94,6 +94,41 @@ namespace Diploma.DataAccess.Migrations
                     b.ToTable("ChatMessages");
                 });
 
+            modelBuilder.Entity("Diploma.Models.Classroom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Classrooms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoomName = "English room"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoomName = "Music room"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoomName = "German room"
+                        });
+                });
+
             modelBuilder.Entity("Diploma.Models.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -243,6 +278,9 @@ namespace Diploma.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ClassroomId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
@@ -270,6 +308,8 @@ namespace Diploma.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
 
                     b.HasIndex("SubjectId");
 
@@ -844,6 +884,12 @@ namespace Diploma.DataAccess.Migrations
 
             modelBuilder.Entity("Diploma.Models.Group", b =>
                 {
+                    b.HasOne("Diploma.Models.Classroom", "Classroom")
+                        .WithMany()
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Diploma.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
@@ -855,6 +901,8 @@ namespace Diploma.DataAccess.Migrations
                         .HasForeignKey("SubjectTeacherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Classroom");
 
                     b.Navigation("Subject");
 
