@@ -24,6 +24,9 @@ function loadDataTable() {
                         <a href="/manager/group/assignStudents?groupId=${data}" class="btn btn-outline-primary border form-control">
                             Assign Students
                         </a>
+                        <button class="btn btn-info mx-2" onClick="GenerateLessons(${data})">
+                            <i class="bi bi-calendar-plus"></i> Generate Lessons
+                        </button>
                     </div>`;
                 }
             }
@@ -52,4 +55,20 @@ function Delete(url) {
             })
         }
     })
+}
+
+function GenerateLessons(groupId) {
+    $.ajax({
+        url: `/manager/lessons/GenerateLessonsForMonth`, // URL метода контроллера
+        type: 'POST', // Используем POST-запрос
+        data: { groupId: groupId },
+        success: function (response) {
+            toastr.success(response); // Показываем сообщение об успешной генерации
+            dataTable.ajax.reload(); // Перезагружаем таблицу
+        },
+        error: function (xhr) {
+            let errorMessage = xhr.responseText || "Произошла ошибка при генерации уроков.";
+            toastr.error(errorMessage); // Показываем сообщение об ошибке
+        }
+    });
 }

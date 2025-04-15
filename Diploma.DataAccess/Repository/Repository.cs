@@ -78,5 +78,10 @@ namespace Diploma.DataAccess.Repository
 		{
 			dbSet.RemoveRange(entity);
 		}
+
+		public void AddRange(IEnumerable<T> entity)
+		{
+			dbSet.AddRange(entity);
+		}
 	}
 }

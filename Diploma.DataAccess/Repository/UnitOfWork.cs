@@ -26,6 +26,8 @@ namespace Diploma.DataAccess.Repository
 		public IFileResourceRepository FileResource { get; private set; }
 		public IChatMessageRepository ChatMessage { get; private set; }
 		public IClassroomRepository Classroom { get; private set; }
+		public ILessonRepository Lesson { get; private set; }
+		public IAttendanceRepository Attendance { get; private set; }
 		public UnitOfWork(ApplicationDbContext db)
 		{
 			_db = db;
@@ -43,6 +45,8 @@ namespace Diploma.DataAccess.Repository
 			FileResource = new FileResourceRepository(_db);
 			ChatMessage = new ChatMessageRepository(_db);
 			Classroom = new ClassroomRepository(_db);
+			Lesson = new LessonRepository(_db);
+			Attendance = new AttendanceRepository(_db);
 		}		
 
 		public void Save()

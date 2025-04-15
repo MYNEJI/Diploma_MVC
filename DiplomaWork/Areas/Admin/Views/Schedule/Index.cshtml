@@ -1,0 +1,26 @@
+﻿@model List<Classroom>
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Schedule List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+        </div>
+        @foreach (var classroom in Model)
+        {
+            <form asp-action="ScheduleList" method="get">
+                <input type="hidden" name="id" value="@classroom.Id" />
+                <button type="submit" class="btn btn-primary">
+                    @classroom.RoomName
+                </button>
+            </form>
+        }
+    </div>
+</div>

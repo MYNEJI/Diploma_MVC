@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Diploma.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409142622_updateGroupModel")]
-    partial class updateGroupModel
+    [Migration("20250415135512_addLessonsEntity")]
+    partial class addLessonsEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,37 @@ namespace Diploma.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Diploma.Models.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GroupStudentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LessonId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupStudentId");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("LessonId1");
+
+                    b.ToTable("Attendances");
+                });
 
             modelBuilder.Entity("Diploma.Models.Category", b =>
                 {
@@ -366,6 +397,33 @@ namespace Diploma.DataAccess.Migrations
                     b.HasIndex("WeekdayId");
 
                     b.ToTable("GroupWeekdays");
+                });
+
+            modelBuilder.Entity("Diploma.Models.Lesson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OriginalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RescheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Lessons");
                 });
 
             modelBuilder.Entity("Diploma.Models.ShoppingCart", b =>
@@ -830,6 +888,29 @@ namespace Diploma.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
+            modelBuilder.Entity("Diploma.Models.Attendance", b =>
+                {
+                    b.HasOne("Diploma.Models.GroupStudent", "GroupStudent")
+                        .WithMany()
+                        .HasForeignKey("GroupStudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.Lesson", "Lesson")
+                        .WithMany()
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Diploma.Models.Lesson", null)
+                        .WithMany("Attendances")
+                        .HasForeignKey("LessonId1");
+
+                    b.Navigation("GroupStudent");
+
+                    b.Navigation("Lesson");
+                });
+
             modelBuilder.Entity("Diploma.Models.ChatMessage", b =>
                 {
                     b.HasOne("Diploma.Models.Group", "Group")
@@ -950,6 +1031,17 @@ namespace Diploma.DataAccess.Migrations
                     b.Navigation("Weekday");
                 });
 
+            modelBuilder.Entity("Diploma.Models.Lesson", b =>
+                {
+                    b.HasOne("Diploma.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
             modelBuilder.Entity("Diploma.Models.ShoppingCart", b =>
                 {
                     b.HasOne("Diploma.Models.ApplicationUser", "ApplicationUser")
@@ -1057,6 +1149,11 @@ namespace Diploma.DataAccess.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Diploma.Models.Lesson", b =>
+                {
+                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

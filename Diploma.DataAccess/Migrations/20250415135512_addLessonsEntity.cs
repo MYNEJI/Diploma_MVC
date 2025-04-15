@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Diploma.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class updateGroupModel : Migration
+    public partial class addLessonsEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -485,6 +485,61 @@ namespace Diploma.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Lessons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GroupId = table.Column<int>(type: "int", nullable: false),
+                    OriginalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RescheduledDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attendances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    GroupStudentId = table.Column<int>(type: "int", nullable: false),
+                    IsPresent = table.Column<bool>(type: "bit", nullable: false),
+                    LessonId1 = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attendances_GroupStudents_GroupStudentId",
+                        column: x => x.GroupStudentId,
+                        principalTable: "GroupStudents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attendances_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Attendances_Lessons_LessonId1",
+                        column: x => x.LessonId1,
+                        principalTable: "Lessons",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "DisplayOrder", "Name" },
@@ -586,6 +641,21 @@ namespace Diploma.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Attendances_GroupStudentId",
+                table: "Attendances",
+                column: "GroupStudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendances_LessonId",
+                table: "Attendances",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendances_LessonId1",
+                table: "Attendances",
+                column: "LessonId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_GroupId",
                 table: "ChatMessages",
                 column: "GroupId");
@@ -651,6 +721,11 @@ namespace Diploma.DataAccess.Migrations
                 column: "WeekdayId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Lessons_GroupId",
+                table: "Lessons",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_ApplicationUserId",
                 table: "ShoppingCarts",
                 column: "ApplicationUserId");
@@ -695,6 +770,9 @@ namespace Diploma.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Attendances");
+
+            migrationBuilder.DropTable(
                 name: "ChatMessages");
 
             migrationBuilder.DropTable(
@@ -702,9 +780,6 @@ namespace Diploma.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "FileResources");
-
-            migrationBuilder.DropTable(
-                name: "GroupStudents");
 
             migrationBuilder.DropTable(
                 name: "GroupWeekdays");
@@ -716,10 +791,16 @@ namespace Diploma.DataAccess.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Groups");
+                name: "GroupStudents");
+
+            migrationBuilder.DropTable(
+                name: "Lessons");
 
             migrationBuilder.DropTable(
                 name: "Weekdays");
+
+            migrationBuilder.DropTable(
+                name: "Groups");
 
             migrationBuilder.DropTable(
                 name: "Classrooms");

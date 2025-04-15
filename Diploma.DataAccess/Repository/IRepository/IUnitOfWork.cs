@@ -22,6 +22,8 @@ namespace Diploma.DataAccess.Repository.IRepository
 		IFileResourceRepository FileResource { get; }
 		IChatMessageRepository ChatMessage { get; }
 		IClassroomRepository Classroom { get; }
+		ILessonRepository Lesson { get; }
+		IAttendanceRepository Attendance { get; }
 		void Save();
 	}
 }
