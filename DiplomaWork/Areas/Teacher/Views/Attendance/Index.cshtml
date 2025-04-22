@@ -1,0 +1,74 @@
+﻿@model AttendanceVM
+
+<h2>Attendance for @Model.SelectedMonth.ToString("MMMM yyyy")</h2>
+<form method="get" asp-area="Teacher" asp-controller="Attendance" asp-action="Index">
+    <input type="hidden" name="groupId" value="@Model.GroupId" />
+
+    <label for="month">Выберите месяц:</label>
+    <select id="month" name="month" class="form-control">
+        @for (var i = 1; i <= 12; i++)
+        {
+            var monthDate = new DateTime(DateTime.Now.Year, i, 1);
+            var isSelected = Model.SelectedMonth.Month == i;
+
+            if (isSelected)
+            {
+                <option value="@monthDate.ToString("yyyy-MM-dd")" selected>
+                    @monthDate.ToString("MMMM yyyy")
+                </option>
+            }
+            else
+            {
+                <option value="@monthDate.ToString("yyyy-MM-dd")">
+                    @monthDate.ToString("MMMM yyyy")
+                </option>
+            }
+        }
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-2">Показать</button>
+</form>
+
+
+<form asp-area="Teacher" asp-controller="Attendance" asp-action="SaveAllAttendances" method="post">
+    <input type="hidden" name="groupId" value="@Model.GroupId" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                @foreach (var lesson in Model.Lessons)
+                {
+                    <th>@lesson.OriginalDate.ToString("dd/MM")</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var index = 0;
+            }
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td>@student.Name</td>
+                    @foreach (var lesson in Model.Lessons)
+                    {
+                        var groupStudent = Model.GroupStudents.FirstOrDefault(gs => gs.ApplicationUserId == student.Id);
+                        var attendance = Model.Attendances.FirstOrDefault(a => a.LessonId == lesson.Id && a.GroupStudentId == groupStudent.Id);
+
+                        <td>
+                            <input type="hidden" name="attendanceData[@index].LessonId" value="@lesson.Id" />
+                            <input type="hidden" name="attendanceData[@index].StudentId" value="@student.Id" />
+                            <input type="checkbox" name="attendanceData[@index].IsPresent" value="true" @(attendance != null && attendance.IsPresent ? "checked" : "") />
+                            @{
+                                index++;
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+</form>

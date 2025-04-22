@@ -58,7 +58,9 @@ namespace DiplomaWork.Areas.Manager.Controllers
 
 			for (var date = startDate; date <= endDate; date = date.AddDays(1))
 			{
-				if (weekDays.Contains((WeekDays)date.DayOfWeek) && !existingLessons.Contains(date)) // Проверка на день недели и отсутствие в БД
+				if (weekDays.Contains((WeekDays)date.DayOfWeek) 
+					//&& !existingLessons.Contains(date)
+					) // Проверка на день недели и отсутствие в БД
 				{
 					lessonsToAdd.Add(new Lesson
 					{
@@ -79,36 +81,32 @@ namespace DiplomaWork.Areas.Manager.Controllers
 			_unitOfWork.Lesson.AddRange(lessonsToAdd);
 			_unitOfWork.Save();
 
-			return Ok($"Сгенерировано {lessonsToAdd.Count} новых уроков для группы {group.Name}.");
-		}
-
-
-		public IActionResult Index()
-		{
-			var claimsIdentity = (ClaimsIdentity)User.Identity;
-			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-			IEnumerable<SubjectTeacher> subjectList = _unitOfWork.SubjectTeacher.GetAll(u => u.ApplicationUserId == userId);
-			List<int> subjectTeacherIds = subjectList.Select(st => st.Id).ToList();
-			List<Group> objGroupList = _unitOfWork.Group.GetAll(u => subjectTeacherIds.
-			Contains(u.SubjectTeacherId), includeProperties: "Subject"
-				).ToList();
-			return View(objGroupList);
-		}
-
-		public IActionResult Students(int groupId)
-		{
-			var students = _unitOfWork.GroupStudent
-				.GetAll(u => u.GroupId == groupId, includeProperties: "ApplicationUser,Group")
-				.ToList();
-
-			if (!students.Any())
+			// Создаем записи посещаемости для новых уроков
+			var studentsInGroup = _unitOfWork.GroupStudent.GetAll(gs => gs.GroupId == groupId).ToList();
+			if (!studentsInGroup.Any())
 			{
-				ViewBag.Message = "Студенты для указанной группы не найдены.";
-				return View(new List<GroupStudent>());
+				return BadRequest("У группы нет студентов для создания записей посещаемости.");
 			}
 
-			return View(students);
+			var attendancesToAdd = new List<Attendance>();
+			foreach (var lesson in lessonsToAdd)
+			{
+				foreach (var student in studentsInGroup)
+				{
+					attendancesToAdd.Add(new Attendance
+					{
+						LessonId = lesson.Id,
+						GroupStudentId = student.Id,
+						IsPresent = false // Изначально отмечаем всех как отсутствующих
+					});
+				}
+			}
+
+			// Сохраняем записи посещаемости
+			_unitOfWork.Attendance.AddRange(attendancesToAdd);
+			_unitOfWork.Save();
+
+			return Ok($"Сгенерировано {lessonsToAdd.Count} новых уроков для группы {group.Name}.");
 		}
 	}
 }

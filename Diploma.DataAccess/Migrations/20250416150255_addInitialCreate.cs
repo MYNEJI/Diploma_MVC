@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Diploma.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addLessonsEntity : Migration
+    public partial class addInitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
