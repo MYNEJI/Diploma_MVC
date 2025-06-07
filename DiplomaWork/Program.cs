@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Diploma.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Diploma.DataAccess.DbInitializer;
+using Stripe;
 
 //////Add-Migration AddCategoryToDbAndSeedTable
 //////Update-database
@@ -20,6 +21,8 @@ namespace DiplomaWork
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddDbContext<ApplicationDbContext>(options =>
 					options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+			builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 			builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 			builder.Services.ConfigureApplicationCookie(options =>
@@ -51,6 +54,7 @@ namespace DiplomaWork
 			}
 
 			app.UseHttpsRedirection();
+			StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 			app.UseRouting();
 			app.UseAuthentication();
 			app.UseAuthorization();

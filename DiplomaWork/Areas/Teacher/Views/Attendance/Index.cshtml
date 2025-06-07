@@ -32,6 +32,7 @@
 
 <form asp-area="Teacher" asp-controller="Attendance" asp-action="SaveAllAttendances" method="post">
     <input type="hidden" name="groupId" value="@Model.GroupId" />
+    <input type="hidden" name="month" value="@Model.SelectedMonth.Month" />
 
     <table class="table">
         <thead>

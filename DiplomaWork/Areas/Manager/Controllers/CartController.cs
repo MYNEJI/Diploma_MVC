@@ -82,17 +82,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 			{
 				return shoppingCart.Subject.Price;
 			}
-			else
-			{
-				if (shoppingCart.Count <= 100)
-				{
-					return shoppingCart.Subject.Price50;
-				}
-				else
-				{
-					return shoppingCart.Subject.Price100;
-				}
-			}
+			return shoppingCart.Subject.Price;
 		}
 	}
 }

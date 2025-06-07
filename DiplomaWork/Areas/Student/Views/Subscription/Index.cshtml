@@ -1,0 +1,42 @@
+﻿@model List<Subject>
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Subject List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Subject Name
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.OrderBy(u => u.Title))
+                {
+                    <tr>
+                        <td>@obj.Title</td>
+                        <td>
+                            <div class="w-75 btn-group" role="group">
+                                <form asp-controller="Subscription" asp-action="Upsert" method="post">
+                                    <input type="hidden" name="subjectId" value="@obj.Id" />
+                                    <button type="submit" class="btn btn-primary mx-2">
+                                        Prolong Subscription
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

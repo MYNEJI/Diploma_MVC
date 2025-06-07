@@ -24,6 +24,7 @@ namespace Diploma.DataAccess.Repository.IRepository
 		IClassroomRepository Classroom { get; }
 		ILessonRepository Lesson { get; }
 		IAttendanceRepository Attendance { get; }
+		ISubscriptionRepository Subscription { get; }
 		void Save();
 	}
 }

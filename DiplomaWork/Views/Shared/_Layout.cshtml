@@ -40,6 +40,12 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Admin" asp-controller="Schedule" asp-action="Index">Schedule</a>
                         </li>
+                        @if (User.IsInRole(SD.Role_Student))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Student" asp-controller="Subscription" asp-action="Index">My Subscriptions</a>
+                            </li>
+                        }
                         @if (User.IsInRole(SD.Role_Admin))
                         {
                             <li class="nav-item dropdown">

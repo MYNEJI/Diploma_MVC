@@ -13,18 +13,10 @@
                                 <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@subject.Title</p>
                             </div>
                             <div class="pl-1">
-                                <p class="text-dark text-opacity-75 text-center mb-0">
-                                    Individual:
-                                    <span class="text-decoration-line-through">
-                                        @subject.ListPrice.ToString("c")
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="pl-1">
                                 <p class="text-dark text-opacity-75 text-center">
-                                    Group:
+                                    Price:
                                     <span>
-                                        @subject.Price100.ToString("c")
+                                        @subject.Price.ToString("c")
                                     </span>
                                 </p>
                             </div>

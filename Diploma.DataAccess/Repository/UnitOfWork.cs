@@ -28,6 +28,7 @@ namespace Diploma.DataAccess.Repository
 		public IClassroomRepository Classroom { get; private set; }
 		public ILessonRepository Lesson { get; private set; }
 		public IAttendanceRepository Attendance { get; private set; }
+		public ISubscriptionRepository Subscription { get; private set; }
 		public UnitOfWork(ApplicationDbContext db)
 		{
 			_db = db;
@@ -47,6 +48,7 @@ namespace Diploma.DataAccess.Repository
 			Classroom = new ClassroomRepository(_db);
 			Lesson = new LessonRepository(_db);
 			Attendance = new AttendanceRepository(_db);
+			Subscription = new SubscriptionRepository(_db);
 		}		
 
 		public void Save()

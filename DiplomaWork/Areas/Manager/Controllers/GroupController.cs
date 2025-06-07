@@ -10,7 +10,7 @@ using Diploma.Models.Enums;
 namespace DiplomaWork.Areas.Manager.Controllers
 {
 	[Area("Manager")]
-	//[Authorize]
+	[Authorize]
 	public class GroupController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;

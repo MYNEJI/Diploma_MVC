@@ -54,7 +54,7 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult SaveAllAttendances(int groupId, List<AttendanceUpdateVM> attendanceData)
+		public IActionResult SaveAllAttendances(int groupId, string month, List<AttendanceUpdateVM> attendanceData)
 		{
 			if (attendanceData == null || !attendanceData.Any())
 			{
@@ -93,7 +93,7 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 
 			_unitOfWork.Save();
 			TempData["Success"] = "Посещаемость успешно сохранена!";
-			return RedirectToAction(nameof(Index), new { groupId });
+			return RedirectToAction(nameof(Index), new { groupId, month });
 		}
 
 	}
