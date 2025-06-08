@@ -1,4 +1,4 @@
-﻿@model List<Subject>
+﻿@model List<SubscriptionVM>
 
 <div class="card shadow border-0 my-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
@@ -12,9 +12,8 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>
-                        Subject Name
-                    </th>
+                    <th>Subject Name</th>
+                    <th>Subscription End Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -23,6 +22,7 @@
                 {
                     <tr>
                         <td>@obj.Title</td>
+                        <td>@obj.EndDate.ToString("yyyy-MM-dd")</td>
                         <td>
                             <div class="w-75 btn-group" role="group">
                                 <form asp-controller="Subscription" asp-action="Upsert" method="post">
@@ -35,8 +35,13 @@
                         </td>
                     </tr>
                 }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center">No subscriptions found</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
-

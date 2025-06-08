@@ -26,15 +26,18 @@ namespace DiplomaWork.Areas.Student.Controllers
 		{
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
 			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-			// Get the subjects the user is subscribed to
-			var groups = _unitOfWork.GroupStudent.GetAll(u => u.ApplicationUserId == userId);
-			var groupIds = groups.Select(g => g.GroupId).ToList();
-			var subjects = _unitOfWork.Group.GetAll(u => groupIds.Contains(u.Id)).ToList();
-			var subscribedSubjects = _unitOfWork.Subject
-				.GetAll(u => u.Id == subjects.Select(s => s.SubjectId).FirstOrDefault()).ToList();
 
-			return View(subscribedSubjects);
-		}		
+			var subscriptions = _unitOfWork.Subscription
+				.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Subject")
+				.Select(sub => new SubscriptionVM
+				{
+					Id = sub.Subject.Id,
+					Title = sub.Subject.Title, // Предполагается, что у Subscription есть связь с Subject
+					EndDate = sub.EndDate
+				}).ToList();
+
+			return View(subscriptions);
+		}
 
 		public IActionResult OrderConfirmation(int id)
 		{
@@ -48,14 +51,14 @@ namespace DiplomaWork.Areas.Student.Controllers
 				subscription.EndDate = date.AddMonths(1);
 				_unitOfWork.Subscription.Update(subscription);
 				_unitOfWork.Save();
+				TempData["success"] = "Payment successful";
+				return RedirectToAction("Index", "Subscription");
 			}
 			else
 			{
 				TempData["error"] = "Payment not successful";
 				return RedirectToAction("Index");
 			}
-
-			return View(id);
 		}
 
 		[HttpPost]
@@ -88,7 +91,7 @@ namespace DiplomaWork.Areas.Student.Controllers
 					var domain = "http://localhost:5155";
 					var options = new SessionCreateOptions
 					{
-						SuccessUrl = domain + $"/Subscription/OrderConfirmation/{subscription.Id}",
+						SuccessUrl = domain + $"/Student/Subscription/OrderConfirmation/{subscription.Id}",
 						CancelUrl = domain + "/Student/Subscription",
 						LineItems = new List<SessionLineItemOptions>(),
 						Mode = "payment",
@@ -122,6 +125,8 @@ namespace DiplomaWork.Areas.Student.Controllers
 					TempData["error"] = $"Error occurred while creating a payment session: {ex.Message}";
 					return RedirectToAction("Index");
 				}
+
+				return RedirectToAction(nameof(OrderConfirmation), new { id = subscription.Id });
 			}
 			else
 			{

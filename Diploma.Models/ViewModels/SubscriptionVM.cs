@@ -10,8 +10,8 @@ namespace Diploma.Models.ViewModels
 {
 	public class SubscriptionVM
 	{
-		public Subscription Subscription { get; set; }
-		[ValidateNever]
-		public IEnumerable<SelectListItem> SubjectList { get; set; }
+		public int Id { get; set; }
+		public string Title { get; set; }
+		public DateTime EndDate { get; set; }
 	}
 }
