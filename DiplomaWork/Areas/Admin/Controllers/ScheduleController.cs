@@ -11,7 +11,6 @@ using Diploma.Models.Enums;
 namespace DiplomaWork.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	[Authorize(Roles = SD.Role_Admin)]
 	public class ScheduleController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
@@ -51,15 +50,8 @@ namespace DiplomaWork.Areas.Admin.Controllers
 			//return View(schedule);
 
 			// Получаем расписание для аудитории
-			List<Group> schedule = _unitOfWork.Group.GetAll(
-		g => g.ClassroomId == id,
-		includeProperties: "Subject,SubjectTeacher"
-	).ToList();
-
-			if (!schedule.Any())
-			{
-				return NotFound($"No schedule found for Classroom ID: {id}");
-			}
+			List<Group> schedule = _unitOfWork.Group.GetAll( g => g.ClassroomId == id,
+									includeProperties: "Subject,SubjectTeacher").ToList();
 
 			// Создаем словарь, группируя данные по дням недели
 			var weekSchedule = new Dictionary<WeekDays, List<Group>>();
@@ -69,7 +61,7 @@ namespace DiplomaWork.Areas.Admin.Controllers
 				weekSchedule[day] = schedule.Where(g => g.WeekDays.Contains(day)).ToList();
 			}
 
-			ViewBag.ClassroomId = id; // Для отображения ID или имени аудитории
+			ViewBag.Name = _unitOfWork.Classroom.Get(u => u.Id == id)?.RoomName; // Возвращает имя аудитории
 			return View(weekSchedule);
 		}
 	}

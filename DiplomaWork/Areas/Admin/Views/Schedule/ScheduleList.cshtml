@@ -1,59 +1,79 @@
 ﻿@using Diploma.Models.Enums;
 @model Dictionary<WeekDays, List<Group>>
 
-<h2>Schedule for Classroom @ViewBag.ClassroomId</h2>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Time</th>
-            @foreach (var day in Enum.GetValues(typeof(Diploma.Models.Enums.WeekDays)))
-            {
-                <th>@day</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            // Группируем расписание по времени начала занятий
-            var timeGroups = Model.Values
-                .SelectMany(g => g) // Извлекаем все группы
-                .GroupBy(g => TimeSpan.Parse(g.StartTime)) // Группируем по времени начала
-                .OrderBy(t => t.Key); // Сортируем по времени
-        }
-        @foreach (var timeGroup in timeGroups) // Переместить сюда, чтобы использовать timeGroup
-        {
-            <tr>
-                <td>@timeGroup.Key</td>
-                @foreach (var day in Enum.GetValues(typeof(Diploma.Models.Enums.WeekDays)))
-                {
-                    // Находим занятия для текущего дня и времени
-                    var groupsForDay = Model[(WeekDays)day]
-                        .Where(g => TimeSpan.Parse(g.StartTime) == timeGroup.Key)
-                        .OrderBy(g => g.Name) // Дополнительно сортируем по имени группы
-                        .ToList();
 
-                   <td style="vertical-align: top;">
-                       @if (groupsForDay.Any())
-                       {
-                           foreach (var group in groupsForDay)
-                           {
-                               <strong>@group.Name</strong><br />
-                               @group.Subject.Title<br />
-                               <small>@group.SubjectTeacher.FullName</small><br />
-                               <small>@group.StartTime - @group.EndTime</small><br />
-                               <hr />
-                           }
-                       }
-                       else
-                       {
-                           <span>—</span>
-                       }
-                   </td>
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Schedule List</h2>
+            </div>
+        </div>
+    </div>
+    <h2>Schedule for @ViewBag.Name</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning text-center my-4">
+            <strong>No schedule available.</strong>
+        </div>
+    }
+    else
+    {
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    @foreach (var day in Enum.GetValues(typeof(Diploma.Models.Enums.WeekDays)))
+                    {
+                        <th>@day</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    // Группируем расписание по времени начала занятий
+                    var timeGroups = Model.Values
+                        .SelectMany(g => g) // Извлекаем все группы
+                        .GroupBy(g => TimeSpan.Parse(g.StartTime)) // Группируем по времени начала
+                        .OrderBy(t => t.Key); // Сортируем по времени
                 }
-            </tr>
-        }
-    </tbody>
-</table>
+                @foreach (var timeGroup in timeGroups) // Переместить сюда, чтобы использовать timeGroup
+                {
+                    <tr>
+                        <td>@timeGroup.Key</td>
+                        @foreach (var day in Enum.GetValues(typeof(Diploma.Models.Enums.WeekDays)))
+                        {
+                            // Находим занятия для текущего дня и времени
+                            var groupsForDay = Model[(WeekDays)day]
+                                .Where(g => TimeSpan.Parse(g.StartTime) == timeGroup.Key)
+                                .OrderBy(g => g.Name) // Дополнительно сортируем по имени группы
+                                .ToList();
 
-<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <td style="vertical-align: top;">
+                                @if (groupsForDay.Any())
+                                {
+                                    foreach (var group in groupsForDay)
+                                    {
+                                        <strong>@group.Name</strong><br />
+                                        @group.Subject.Title<br />
+                                        <small>@group.SubjectTeacher.FullName</small><br />
+                                        <small>@group.StartTime - @group.EndTime</small><br />
+                                        <hr />
+                                    }
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -4,9 +4,11 @@ using Diploma.Models;
 using Diploma.Models.ViewModels;
 using Diploma.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace DiplomaWork.Areas.Admin.Controllers
 {
@@ -16,11 +18,15 @@ namespace DiplomaWork.Areas.Admin.Controllers
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IWebHostEnvironment _webHostEnvironment;
+		private readonly UserManager<IdentityUser> _userManager;
 
-		public SubjectController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+
+		public SubjectController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, UserManager<IdentityUser> userManager)
 		{
 			_unitOfWork = unitOfWork;
 			_webHostEnvironment = webHostEnvironment;
+			_userManager = userManager;
+
 		}
 		public IActionResult Index()
 		{
@@ -54,6 +60,7 @@ namespace DiplomaWork.Areas.Admin.Controllers
 				return View(subjectVM);
 			}
 		}
+
 		[HttpPost]
 		public IActionResult Upsert(SubjectVM subjectVM, IFormFile? file)
 		{
@@ -111,7 +118,7 @@ namespace DiplomaWork.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult AssignTeachers(int subjectId)
+		public async Task<IActionResult> AssignTeachers(int subjectId)
 		{
 			var subject = _unitOfWork.Subject.Get(u => u.Id == subjectId, includeProperties: "Category");
 			if (subject == null)
@@ -119,16 +126,25 @@ namespace DiplomaWork.Areas.Admin.Controllers
 				return NotFound();
 			}
 
+			var teacherIds = (await _userManager.GetUsersInRoleAsync("Teacher"))
+					.Select(user => user.Id)
+					.ToList();
+
+			var teacherUsers = _unitOfWork.ApplicationUser.GetAll()
+								.Where(user => teacherIds.Contains(user.Id))
+								.ToList();
+
 			SubjectTeacherVM vm = new SubjectTeacherVM
 			{
 				Subject = subject,
-				TeacherList = _unitOfWork.ApplicationUser.GetAll().Select(user => new SelectListItem
+				TeacherList = teacherUsers.Select(user => new SelectListItem
 				{
 					Text = user.Name,
 					Value = user.Id
 				}),
 				AssignedTeachers = _unitOfWork.SubjectTeacher.GetAll(u => u.SubjectId == subjectId)
-								  .Select(u => u.ApplicationUserId).ToList()
+									  .Select(u => u.ApplicationUserId)
+									  .ToList()
 			};
 
 			return View(vm);
@@ -167,6 +183,26 @@ namespace DiplomaWork.Areas.Admin.Controllers
 			}
 
 			return RedirectToAction(nameof(AssignTeachers), new { subjectId = vm.Subject.Id });
+		}
+
+		[HttpPost]
+		public IActionResult RemoveTeacher(int subjectId, string teacherId)
+		{
+			var assignment = _unitOfWork.SubjectTeacher.GetAll(u =>
+				u.SubjectId == subjectId && u.ApplicationUserId == teacherId).FirstOrDefault();
+
+			if (assignment != null)
+			{
+				_unitOfWork.SubjectTeacher.Remove(assignment);
+				_unitOfWork.Save();
+				TempData["success"] = "Teacher removed successfully!";
+			}
+			else
+			{
+				TempData["error"] = "This teacher is not assigned to this subject.";
+			}
+
+			return RedirectToAction(nameof(AssignTeachers), new { subjectId });
 		}
 
 		#region API CALLS

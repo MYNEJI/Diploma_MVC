@@ -13,6 +13,9 @@
 
     <textarea id="messageInput" class="form-control mt-2" rows="2" placeholder="Введите сообщение..."></textarea>
     <button id="sendButton" class="btn btn-success mt-2">Отправить</button>
+    <a asp-controller="Study" asp-action="Index" class="btn btn-outline-primary mt-2">
+        Back To List
+    </a>
 
     @Html.AntiForgeryToken() <!-- CSRF-токен -->
 </div>

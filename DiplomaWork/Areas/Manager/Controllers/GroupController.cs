@@ -1,11 +1,12 @@
 ﻿using Diploma.DataAccess.Repository.IRepository;
-using Diploma.Models.ViewModels;
 using Diploma.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Diploma.Models.Enums;
+using Diploma.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace DiplomaWork.Areas.Manager.Controllers
 {
@@ -15,10 +16,13 @@ namespace DiplomaWork.Areas.Manager.Controllers
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IWebHostEnvironment _webHostEnvironment;
-		public GroupController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+		private readonly UserManager<IdentityUser> _userManager;
+
+		public GroupController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, UserManager<IdentityUser> userManager)
 		{
 			_unitOfWork = unitOfWork;
 			_webHostEnvironment = webHostEnvironment;
+			_userManager = userManager;
 		}
 		public IActionResult Index(int subjectId)
 		{
@@ -94,7 +98,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult AssignStudents(int groupId)
+		public async Task<IActionResult> AssignStudents(int groupId)
 		{
 			var group = _unitOfWork.Group.Get(u => u.Id == groupId, includeProperties: "Subject");
 			if (group == null)
@@ -102,10 +106,18 @@ namespace DiplomaWork.Areas.Manager.Controllers
 				return NotFound();
 			}
 
+			var studentIds = (await _userManager.GetUsersInRoleAsync("Student"))
+					.Select(user => user.Id)
+					.ToList();
+
+			var studentUsers = _unitOfWork.ApplicationUser.GetAll()
+								.Where(user => studentIds.Contains(user.Id))
+								.ToList();
+
 			GroupStudentVM vm = new GroupStudentVM
 			{
 				Group = group,
-				StudentList = _unitOfWork.ApplicationUser.GetAll().Select(user => new SelectListItem
+				StudentList = studentUsers.Select(user => new SelectListItem
 				{
 					Text = user.Name,
 					Value = user.Id
@@ -150,6 +162,26 @@ namespace DiplomaWork.Areas.Manager.Controllers
 			}
 
 			return RedirectToAction(nameof(AssignStudents), new { groupId = vm.Group.Id });
+		}
+
+		[HttpPost]
+		public IActionResult RemoveStudent(int groupId, string studentId)
+		{
+			var assignment = _unitOfWork.GroupStudent.GetAll(u =>
+				u.GroupId == groupId && u.ApplicationUserId == studentId).FirstOrDefault();
+
+			if (assignment != null)
+			{
+				_unitOfWork.GroupStudent.Remove(assignment);
+				_unitOfWork.Save();
+				TempData["success"] = "Student removed successfully!";
+			}
+			else
+			{
+				TempData["error"] = "This student is not assigned to this subject.";
+			}
+
+			return RedirectToAction(nameof(AssignStudents), new { groupId });
 		}
 
 		#region API CALLS

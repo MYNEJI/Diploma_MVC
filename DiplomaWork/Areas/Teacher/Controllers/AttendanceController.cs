@@ -95,6 +95,5 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 			TempData["Success"] = "Посещаемость успешно сохранена!";
 			return RedirectToAction(nameof(Index), new { groupId, month });
 		}
-
 	}
 }

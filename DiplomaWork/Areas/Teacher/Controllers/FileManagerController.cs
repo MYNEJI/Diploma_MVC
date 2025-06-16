@@ -20,23 +20,11 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 
 		public IActionResult Index(int groupId)
 		{
+			var group = _unitOfWork.Group.Get(u => u.Id == groupId);
+			ViewBag.GroupName = group.Name;
 			ViewBag.GroupId = groupId;
-			var resources = _unitOfWork.FileResource.GetAll(u => u.GroupId == groupId);
+			var resources = _unitOfWork.FileResource.GetAll(u => u.GroupId == groupId);			
 			return View(resources);
-		}
-
-		[HttpPost]
-		public IActionResult CreateFolder(int groupId, string folderName)
-		{
-			var folder = new FileResource
-			{
-				Name = folderName,
-				IsFolder = true,
-				GroupId = groupId
-			};
-			_unitOfWork.FileResource.Add(folder);
-			_unitOfWork.Save();
-			return RedirectToAction("Index", new { groupId });
 		}
 
 		[HttpPost]
@@ -51,6 +39,13 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 				using (var stream = new FileStream(filePath, FileMode.Create))
 				{
 					file.CopyTo(stream);
+				}
+
+				// Проверка существования файла
+				if (System.IO.File.Exists(filePath))
+				{
+					TempData["Error"] = $"A file with the name '{file.FileName}' already exists.";
+					return RedirectToAction("Index", new { groupId });
 				}
 
 				var fileResource = new FileResource
@@ -107,5 +102,29 @@ namespace DiplomaWork.Areas.Teacher.Controllers
 			return RedirectToAction("Index", new { groupId = groupId });
 		}
 
+		public IActionResult Download(int id)
+		{
+			// Найдите ресурс по ID
+			var resource = _unitOfWork.FileResource.Get(u => u.Id == id);
+
+			if (resource == null || resource.IsFolder)
+			{
+				return NotFound("File not found or it's a folder.");
+			}
+
+			// Полный путь к файлу
+			var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", resource.FilePath);
+
+			if (!System.IO.File.Exists(filePath))
+			{
+				return NotFound("File does not exist on the server.");
+			}
+
+			// Возвращаем файл
+			var contentType = "application/octet-stream"; // По умолчанию бинарный файл
+			var fileName = resource.Name;
+
+			return PhysicalFile(filePath, contentType, fileName);
+		}
 	}
 }

@@ -1,10 +1,10 @@
 ﻿@model AttendanceVM
 
-<h2>Attendance for @Model.SelectedMonth.ToString("MMMM yyyy")</h2>
+<h2>Attendance for @Model.SelectedMonth.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</h2>
 <form method="get" asp-area="Teacher" asp-controller="Attendance" asp-action="Index">
     <input type="hidden" name="groupId" value="@Model.GroupId" />
 
-    <label for="month">Выберите месяц:</label>
+    <label for="month">Choose month:</label>
     <select id="month" name="month" class="form-control">
         @for (var i = 1; i <= 12; i++)
         {
@@ -26,7 +26,7 @@
         }
     </select>
 
-    <button type="submit" class="btn btn-primary mt-2">Показать</button>
+    <button type="submit" class="btn btn-primary mt-2">Show</button>
 </form>
 
 
@@ -40,7 +40,11 @@
                 <th>Student</th>
                 @foreach (var lesson in Model.Lessons)
                 {
-                    <th>@lesson.OriginalDate.ToString("dd/MM")</th>
+                    <th>
+                        @lesson.OriginalDate.ToString("dd/MM")
+                        @lesson.OriginalDate.ToString("dddd", System.Globalization.CultureInfo.InvariantCulture)
+                    </th>
+
                 }
             </tr>
         </thead>
@@ -71,5 +75,8 @@
 
         </tbody>
     </table>
-    <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+    <button type="submit" class="btn btn-primary mt-3">Save changes</button>
+    <a asp-controller="Study" asp-action="Index" class="btn btn-outline-primary mt-3">
+        Back To List
+    </a>
 </form>

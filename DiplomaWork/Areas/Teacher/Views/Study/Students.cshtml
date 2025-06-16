@@ -4,7 +4,7 @@
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Group List</h2>
+                <h2 class="text-white py-2">Student List</h2>
             </div>
         </div>
     </div>
@@ -18,9 +18,9 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Group Name</th>
-                    <th>Subject Name</th>
-                    <th>Creation Date</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,10 +30,12 @@
                         <td>@student.ApplicationUser.Name</td>
                         <td>@student.ApplicationUser.Email</td>
                         <td>@student.ApplicationUser.PhoneNumber</td>
-                        <td></td>
                     </tr>
                 }
             </tbody>
         </table>
+        <a asp-controller="Study" asp-action="Index" class="btn btn-outline-primary mt-3">
+            Back To List
+        </a>
     </div>
 </div>

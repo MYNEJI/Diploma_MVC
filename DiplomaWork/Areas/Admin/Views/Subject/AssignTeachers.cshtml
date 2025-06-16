@@ -16,18 +16,27 @@
             <button type="submit" class="btn btn-primary mt-3">Assign Teacher</button>
         </form>
 
-        <h3 class="mt-5">Assigned Teachers</h3>
-        <ul>
+        <h3 class="mt-5 text-secondary fw-bold">Assigned Teachers</h3>
+        <ul class="list-group mt-3">
             @foreach (var teacherId in Model.AssignedTeachers)
             {
                 var teacher = Model.TeacherList.FirstOrDefault(t => t.Value == teacherId);
                 if (teacher != null)
                 {
-                    <li>@teacher.Text</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>@teacher.Text</span>
+                        <form method="post" asp-action="RemoveTeacher" class="d-inline">
+                            <input type="hidden" name="SubjectId" value="@Model.Subject.Id" />
+                            <input type="hidden" name="TeacherId" value="@teacher.Value" />
+                            <button type="submit" class="btn btn-danger btn-sm shadow-sm">
+                                <i class="bi bi-trash-fill"></i> Remove
+                            </button>
+                        </form>
+                    </li>
                 }
             }
         </ul>
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-md-3 mt-3">
             <a asp-controller="Subject" asp-action="Upsert" asp-route-id="@Model.Subject.Id" class="btn btn-outline-primary border form-control">
                 Back
             </a>

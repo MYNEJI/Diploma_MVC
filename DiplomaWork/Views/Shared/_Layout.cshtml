@@ -28,25 +28,31 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Manager" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Manager" asp-controller="Request" asp-action="Index">Request Management</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Manager" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Teacher" asp-controller="Study" asp-action="Index">Study</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Admin" asp-controller="Schedule" asp-action="Index">Schedule</a>
-                        </li>
+                        @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Manager))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Manager" asp-controller="Request" asp-action="Index">Request Management</a>
+                            </li>
+                        }
+                        @if (User.IsInRole(SD.Role_Teacher))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Teacher" asp-controller="Study" asp-action="Index">Study</a>
+                            </li>
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Schedule" asp-action="Index">Schedule</a>
+                            </li>
+                        }
                         @if (User.IsInRole(SD.Role_Student))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Student" asp-controller="Subscription" asp-action="Index">My Subscriptions</a>
                             </li>
                         }
-                        @if (User.IsInRole(SD.Role_Admin))
+                        @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Manager))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -94,7 +100,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer bg-primary text-muted">
+    <footer class="border-top footer bg-primary text-muted ">
         <div class="text-center">
             Made with <i class="bi bi-heart-fill"></i> by DotNetMastery
         </div>
