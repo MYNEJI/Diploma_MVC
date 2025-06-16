@@ -10,32 +10,33 @@
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
-        <label asp-for="SubjectId" class="form-label"></label>
-        <input asp-for="SubjectId" class="form-control" />
+        <input asp-for="SubjectId" class="form-control"  type="hidden"/>
         <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
 
+
     <div class="form-group mb-3">
-        <label asp-for="@Model.CreationDate" class="form-label"></label>
+        <label asp-for="@Model.CreationDate" class="form-label">Creation Date</label>
         <input asp-for="@Model.CreationDate" class="form-control" type="date" readonly />
         <span asp-validation-for="@Model.CreationDate" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="StartTime" class="form-label"></label>
+        <label asp-for="StartTime" class="form-label">Start Time</label>
         <input asp-for="StartTime" class="form-control" type="time" />
         <span asp-validation-for="StartTime" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="EndTime" class="form-label"></label>
+        <label asp-for="EndTime" class="form-label">End Time</label>
         <input asp-for="EndTime" class="form-control" type="time" />
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="ClassroomId" class="form-label"></label>
+        <label asp-for="ClassroomId" class="form-label">Classroom</label>
         <select asp-for="ClassroomId" asp-items="ViewBag.ClassroomList" class="form-control"></select>
         <span asp-validation-for="ClassroomId" class="text-danger"></span>
     </div>
@@ -47,14 +48,14 @@
             {
                 <input type="checkbox" name="WeekDays" value="@day"
                        @(Model.WeekDays != null && Model.WeekDays.Contains(day) ? "checked" : "") />
-                <label>@day</label>
+                <label class="mt-2">@day</label>
             }
         </div>
         <span asp-validation-for="WeekDays" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="SubjectTeacherId" class="form-label"></label>
+        <label asp-for="SubjectTeacherId" class="form-label mt-2">Select teacher:</label>
         <select asp-for="SubjectTeacherId" asp-items="ViewBag.SubjectTeacherList" class="form-control"></select>
         <span asp-validation-for="SubjectTeacherId" class="text-danger"></span>
     </div>

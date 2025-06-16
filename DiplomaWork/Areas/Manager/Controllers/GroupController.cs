@@ -2,6 +2,7 @@
 using Diploma.Models;
 using Diploma.Models.Enums;
 using Diploma.Models.ViewModels;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,11 @@ namespace DiplomaWork.Areas.Manager.Controllers
 				.OrderByDescending(g => g.CreationDate)
 				.ToList();
 
+			var subject = _unitOfWork.Subject.Get(u => u.Id == subjectId);
+
 			ViewBag.SubjectId = subjectId;
+			ViewBag.SubjectTitle = subject.Title;
+
 			return View(groups);
 		}
 
@@ -41,8 +46,8 @@ namespace DiplomaWork.Areas.Manager.Controllers
 		public IActionResult Upsert(int id, int subjectId)
 		{
 			ViewBag.SubjectId = subjectId;			
-			Group groupObj = id == 0
-				? new Group { CreationDate = DateTime.Now, SubjectId = subjectId }
+			Diploma.Models.Group groupObj = id == 0
+				? new Diploma.Models.Group { CreationDate = DateTime.Now, SubjectId = subjectId }
 				: _unitOfWork.Group.Get(u => u.Id == id, includeProperties: "Subject,SubjectTeacher,Classroom");
 
 			var teachers = _unitOfWork.SubjectTeacher
@@ -72,7 +77,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Upsert(Group groupObj, List<WeekDays> WeekDays)
+		public IActionResult Upsert(Diploma.Models.Group groupObj, List<WeekDays> WeekDays)
 		{
 			if (ModelState.IsValid)
 			{
@@ -86,7 +91,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 					_unitOfWork.Group.Update(groupObj);
 				}
 				_unitOfWork.Save();
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { subjectId = groupObj.SubjectId });
 			}
 
 			// Если валидация не прошла, нужно снова подготовить списки
@@ -125,6 +130,7 @@ namespace DiplomaWork.Areas.Manager.Controllers
 				AssignedStudents = _unitOfWork.GroupStudent.GetAll(u => u.GroupId == groupId)
 								  .Select(u => u.ApplicationUserId).ToList()
 			};
+			ViewBag.SubjectId = group.SubjectId;
 
 			return View(vm);
 		}
@@ -153,6 +159,22 @@ namespace DiplomaWork.Areas.Manager.Controllers
 					GroupId = vm.Group.Id,
 					ApplicationUserId = vm.SelectedStudentId
 				});
+
+				var subscription = _unitOfWork.Subscription.Get(u => u.ApplicationUserId == vm.SelectedStudentId);
+				var groupStudent = _unitOfWork.Group.Get(u => u.Id == vm.Group.Id);
+				if (subscription == null)
+				{
+					var createNewSubscription = new Diploma.Models.Subscription
+					{
+						ApplicationUserId = vm.SelectedStudentId,
+						SubjectId = groupStudent.SubjectId,
+						StartDate = DateTime.Now,
+						EndDate = DateTime.Now
+					};
+					_unitOfWork.Subscription.Add(createNewSubscription);
+					_unitOfWork.Save();
+				}
+
 				_unitOfWork.Save();
 				TempData["success"] = "Student assigned successfully!";
 			}
@@ -187,16 +209,41 @@ namespace DiplomaWork.Areas.Manager.Controllers
 		#region API CALLS
 
 		[HttpGet]
-		public IActionResult GetAll()
+		public IActionResult GetAll(int? subjectId)  // Добавляем параметр subjectId
 		{
-			List<Group> objGroupList = _unitOfWork.Group
-				.GetAll(includeProperties: "Subject")
-				.OrderBy(r => r.CreationDate)
-				.ToList();
+			IEnumerable<Diploma.Models.Group> objGroupList;
 
-			return Json(new { data = objGroupList });
+			if (subjectId.HasValue && subjectId > 0)
+			{
+				// Фильтрация по subjectId, если он указан
+				objGroupList = _unitOfWork.Group
+					.GetAll(g => g.SubjectId == subjectId,
+						   includeProperties: "Subject,Classroom")
+					.OrderBy(r => r.CreationDate)
+					.ToList();
+			}
+			else
+			{
+				// Получение всех групп, если subjectId не указан
+				objGroupList = _unitOfWork.Group
+					.GetAll(includeProperties: "Subject,Classroom")
+					.OrderBy(r => r.CreationDate)
+					.ToList();
+			}
+
+			var result = objGroupList.Select(group => new
+			{
+				group.Id,
+				group.Name,
+				group.CreationDate,
+				group.StartTime,
+				group.EndTime,
+				RoomName = group.Classroom?.RoomName,
+				SubjectId = group.SubjectId
+			});
+
+			return Json(new { data = result });
 		}
-
 
 		[HttpDelete]
 		public IActionResult Delete(int? id)

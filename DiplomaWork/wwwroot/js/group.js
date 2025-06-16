@@ -13,7 +13,7 @@ function loadDataTable() {
             { "data": "creationDate", "width": "15%" },
             { "data": "startTime", "width": "10%" },
             { "data": "endTime", "width": "10%" },
-            { "data": "classroom", "width": "10%" },
+            { "data": "roomName", "width": "10%" },
             {
                 data: 'id',
                 "render": function (data, type, row) {
